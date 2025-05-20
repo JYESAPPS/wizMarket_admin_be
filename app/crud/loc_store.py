@@ -141,7 +141,7 @@ def get_filtered_loc_store(filters: dict):
                 JOIN sub_district ON local_store.sub_district_id = sub_district.sub_district_id
                 WHERE IS_EXIST = 1 
             """
-            # print(filters)
+            print(filters)
             # 필터 조건 추가
             additional_conditions = {"query": "", "params": []}
 
@@ -152,6 +152,8 @@ def get_filtered_loc_store(filters: dict):
                         conditions.append("local_store.ktmyshop = 1")
                     elif option == "jsam":  # "JSAM"의 value 값은 "jsam"이라고 가정
                         conditions.append("local_store.jsam = 1")
+                    elif option == "PULMUONE":
+                        conditions.append("local_store.PULMUONE = 1")
                 
                 if conditions:
                     # 조건들을 OR로 묶어서 추가
