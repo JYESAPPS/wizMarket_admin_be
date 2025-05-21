@@ -67,6 +67,8 @@ def get_filtered_loc_store(filters: dict):
                         additional_conditions["query"] += " AND local_store.ktmyshop = 1"
                     elif option == "JSAM":
                         additional_conditions["query"] += " AND local_store.jsam = 1"
+                    elif option == "PULMUONE":
+                        additional_conditions["query"] += " AND local_store.PULMUONE = 1"
 
             if filters.get("city"):
                 additional_conditions["query"] += " AND local_store.city_id = %s"
@@ -141,7 +143,7 @@ def get_filtered_loc_store(filters: dict):
                 JOIN sub_district ON local_store.sub_district_id = sub_district.sub_district_id
                 WHERE IS_EXIST = 1 
             """
-            print(filters)
+            # print(filters)
             # 필터 조건 추가
             additional_conditions = {"query": "", "params": []}
 
