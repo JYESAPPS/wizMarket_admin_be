@@ -7,8 +7,8 @@ from app.schemas.test_router import (
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-@router.post("/select/init/stat/corr")
+@router.post("/router")
 def init_data(request : TestRouter):
-    name = request.name
-
-    return {"name" : name} 
+    name_python = request.name
+    print(name_python)
+    return {"name" : name_python} 
