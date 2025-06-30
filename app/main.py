@@ -30,7 +30,6 @@ from app.api.endpoints import city
 from app.api.endpoints import loc_store
 from app.api.endpoints import business_area_category
 from app.api.endpoints import statistics
-from app.api.endpoints import test_router
 
 app = FastAPI()
 
@@ -75,7 +74,6 @@ app.include_router(statistics.router, prefix="/statistics")
 app.include_router(local_store_content.router, prefix="/store/content")
 app.include_router(category_content.router, prefix="/category/content")
 app.include_router(ads.router, prefix="/ads")
-app.include_router(test_router.router, prefix="/test")
 
 if __name__ == "__main__":
     import uvicorn
