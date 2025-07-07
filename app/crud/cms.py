@@ -30,7 +30,7 @@ def insert_thumbnail(data):
                 thumbnail_id = cursor.lastrowid
 
                 # ✅ design별 번호로 경로 구성
-                image_path = f"http://221.151.48.225:58002/uploads/thumbnail/{category_id}/{design_id}/thumbnail_{file_index}.png"
+                image_path = f"http://221.151.48.225:58002/uploads/thumbnail/{category_id}/{design_id}/thumbnail_{file_index}_thumb.jpg"
                 file_index += 1
 
                 # 썸네일 패스 테이블에 insert
