@@ -500,7 +500,7 @@ def select_loc_store_for_content_by_store_business_number(
             close_connection(connection)
 
 
-
+# 기존 매장 일치 여부
 def match_exist_store(
     city_id, district_id, sub_district_id,
     large_category_code, medium_category_code, small_category_code,
@@ -540,7 +540,6 @@ def match_exist_store(
 
 # 카테고리 명 가져오기
 def get_category_name(small_category_code):
-
     connection = get_db_connection()
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
@@ -627,7 +626,7 @@ def add_new_store(
                 medium_category_name,
                 small_category_name,
                 store_name,
-                road_name,
+                road_name_address,
                 longitude,
                 latitude,
                 is_exist,
@@ -669,3 +668,192 @@ def add_new_store(
         connection.close()
 
 
+
+# 매장 정보 가져오기
+def get_store_data(store_business_number):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                SUB_DISTRICT_ID,
+                STORE_NAME, ROAD_NAME_ADDRESS,
+                SMALL_CATEGORY_CODE, LONGITUDE, LATITUDE
+            FROM LOCAL_STORE
+            WHERE STORE_BUSINESS_NUMBER = %s;
+        """
+
+        cursor.execute(select_query, (store_business_number))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["SUB_DISTRICT_ID"],
+                row["STORE_NAME"],
+                row["ROAD_NAME_ADDRESS"],
+                row["SMALL_CATEGORY_CODE"],
+                row["LONGITUDE"],
+                row["LATITUDE"]
+            )
+        else:
+            return (None, None, None, None, None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# 지역명 가져오기
+def get_city_data(sub_district_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                c.CITY_NAME,
+                d.DISTRICT_NAME,
+                sd.SUB_DISTRICT_NAME
+            FROM SUB_DISTRICT sd
+            JOIN DISTRICT d ON sd.DISTRICT_ID = d.DISTRICT_ID
+            JOIN CITY c ON d.CITY_ID = c.CITY_ID
+            WHERE sd.SUB_DISTRICT_ID = %s;
+        """
+
+        cursor.execute(select_query, (sub_district_id))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["CITY_NAME"],
+                row["DISTRICT_NAME"],
+                row["SUB_DISTRICT_NAME"],
+            )
+        else:
+            return (None, None, None, None, None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# 입지 정보 데이터 가져오기
+def get_loc_info_data(sub_district_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                SHOP, MOVE_POP, SALES, WORK_POP, INCOME, SPEND, HOUSE, RESIDENT
+            FROM loc_info
+            WHERE SUB_DISTRICT_ID = %s;
+        """
+
+        cursor.execute(select_query, (sub_district_id))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["SHOP"],
+                row["MOVE_POP"],
+                row["SALES"],
+                row["WORK_POP"],
+                row["INCOME"],
+                row["SPEND"],
+                row["HOUSE"],
+                row["RESIDENT"]
+            )
+        else:
+            return (None, None, None, None, None, None, None, None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# 카테고리 ID 가져오기
+def get_category_data(small_category_code):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                BUSINESS_AREA_CATEGORY_ID
+            FROM business_area_category
+            WHERE detail_category_code = %s;
+        """
+
+        cursor.execute(select_query, (small_category_code))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["BUSINESS_AREA_CATEGORY_ID"],
+            )
+        else:
+            return (None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+def get_biz_id(detail_category_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                REP_ID
+            FROM detail_category_mapping
+            WHERE business_area_category_id = %s;
+        """
+
+        cursor.execute(select_query, (detail_category_id))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["REP_ID"],
+            )
+        else:
+            return (None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+def get_biz_category_name(rep_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                BIZ_MAIN_CATEGORY_NAME, BIZ_SUB_CATEGORY_NAME, BIZ_DETAIL_CATEGORY_NAME
+            FROM biz_detail_category dc
+            JOIN biz_sub_category sc ON dc.BIZ_SUB_CATEGORY_ID = sc.BIZ_SUB_CATEGORY_ID
+            JOIN biz_main_Category mc ON sc.BIZ_MAIN_CATEGORY_ID = mc.BIZ_MAIN_CATEGORY_ID
+            WHERE biz_detail_category_id = %s;
+        """
+
+        cursor.execute(select_query, (rep_id))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["BIZ_MAIN_CATEGORY_NAME"],
+                row["BIZ_SUB_CATEGORY_NAME"],
+                row["BIZ_DETAIL_CATEGORY_NAME"],
+            )
+        else:
+            return (None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()

@@ -3,7 +3,8 @@ from app.service.loc_store import (
     filter_loc_store,
     select_loc_store_for_content_by_store_business_number as service_select_loc_store_for_content_by_store_business_number,
     match_exist_store as service_match_exist_store,
-    add_new_store as service_add_new_store
+    add_new_store as service_add_new_store,
+    copy_new_store as service_copy_new_store
 )
 from app.schemas.loc_store import *
 import logging
@@ -43,7 +44,7 @@ def select_loc_store_for_content_by_store_business_number(store_business_number:
         raise HTTPException(status_code=500, detail=error_msg)
 
 
-# 필터로 조회
+# 매장 1개 등록
 @router.post("/add")
 def add_new_store(request: AddRequest):
     # 1. 기존 매장 존재 여부 확인
@@ -70,7 +71,7 @@ def add_new_store(request: AddRequest):
     if response.status_code != 200:
         return JSONResponse(
             status_code=500,
-            content={"success": False, "message": "위경도 조회 실패"}
+            content={"success": False, "message": "위경도 조회 실패", "number" : ""}
         )
 
     data = response.json()
@@ -80,19 +81,36 @@ def add_new_store(request: AddRequest):
     except (KeyError, TypeError, ValueError):
         return JSONResponse(
             status_code=500,
-            content={"success": False, "message": "좌표 파싱 실패"}
+            content={"success": False, "message": "좌표 파싱 실패", "number" : ""}
         )
 
     # 3. 매장 등록 시도
-    success = service_add_new_store(request, longitude, latitude)
+    success, store_business_number = service_add_new_store(request, longitude, latitude)
 
     if success:
         return JSONResponse(
             status_code=200,
-            content={"success": True, "message": "매장이 성공적으로 등록되었습니다."}
+            content={"success": True, "message": "매장이 성공적으로 등록되었습니다.", "number" : store_business_number}
         )
     else:
         return JSONResponse(
             status_code=500,
-            content={"success": False, "message": "매장 등록 중 오류 발생"}
+            content={"success": False, "message": "매장 등록 중 오류 발생", "number" : ""}
         )
+    
+
+# 등록한 매장 Report DB 로 연동
+@router.post("/copy")
+def copy_new_store(request: ReportRequest):
+    store_business_number = request.store_business_number
+
+    # 서비스 레이어 전달
+    sucess = service_copy_new_store(store_business_number)
+
+
+
+
+
+
+
+

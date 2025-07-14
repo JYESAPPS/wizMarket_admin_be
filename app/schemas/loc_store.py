@@ -195,3 +195,8 @@ class AddRequest(BaseModel):
     store_name: str 
     road_name : str
     selected: Optional[List[str]]
+
+
+class ReportRequest(BaseModel):
+    store_business_number: str
+

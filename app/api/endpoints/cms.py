@@ -18,6 +18,6 @@ async def insert_thumbnail(data: ThumbnailInsertRequest):
     # for style in data.styles:
     #     print(f"스타일 {style.designId} - 프롬프트 수: {len(style.prompts)}")
     
-    # service_insert_thumbnail(data)
+    service_insert_thumbnail(data)
 
     return {"message": "ok"}
