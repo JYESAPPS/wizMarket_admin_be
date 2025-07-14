@@ -498,3 +498,174 @@ def select_loc_store_for_content_by_store_business_number(
             close_cursor(cursor)
         if connection:
             close_connection(connection)
+
+
+
+def match_exist_store(
+    city_id, district_id, sub_district_id,
+    large_category_code, medium_category_code, small_category_code,
+    store_name
+):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                STORE_BUSINESS_NUMBER
+            FROM LOCAL_STORE
+            WHERE 
+                CITY_ID = %s and
+                DISTRICT_ID = %s and
+                SUB_DISTRICT_ID = %s and
+                LARGE_CATEGORY_CODE = %s and
+                MEDIUM_CATEGORY_CODE = %s and
+                SMALL_CATEGORY_CODE = %s and
+                STORE_NAME = %s
+        """
+
+        cursor.execute(select_query, (city_id, district_id, sub_district_id, large_category_code, medium_category_code, small_category_code, store_name))
+        row = cursor.fetchone()
+
+        if row:
+            return False
+        else:
+            return True
+
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# 카테고리 명 가져오기
+def get_category_name(small_category_code):
+
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                MAIN_CATEGORY_NAME,
+                SUB_CATEGORY_NAME,
+                DETAIL_CATEGORY_NAME
+            FROM BUSINESS_AREA_CATEGORY
+            WHERE DETAIL_CATEGORY_CODE = %s;
+        """
+
+        cursor.execute(select_query, (small_category_code))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["MAIN_CATEGORY_NAME"],
+                row["SUB_CATEGORY_NAME"],
+                row["DETAIL_CATEGORY_NAME"]
+            )
+        else:
+            return (None, None, None)
+
+
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# MAX 값 뽑기
+def get_max_number():
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT MAX(CAST(SUBSTRING(store_business_number, 3) AS UNSIGNED)) AS max_js_number
+            FROM local_store
+            WHERE store_business_number LIKE 'JS%';
+        """
+
+        cursor.execute(select_query)
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["max_js_number"],
+            )
+        else:
+            return (None, None, None)
+
+
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+# 새 매장 추가
+def add_new_store(
+    store_business_number, city_id, district_id, sub_district_id, reference_id, 
+    large_category_code, medium_category_code, small_category_code,
+    large_category_name, medium_category_name, small_category_name,
+    store_name, road_name, longitude, latitude, tag_flags  
+):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    try:
+        insert_query = """
+            INSERT INTO local_store (
+                store_business_number,
+                city_id,
+                district_id,
+                sub_district_id,
+                reference_id,
+                large_category_code,
+                medium_category_code,
+                small_category_code,
+                large_category_name,
+                medium_category_name,
+                small_category_name,
+                store_name,
+                road_name,
+                longitude,
+                latitude,
+                is_exist,
+                jsam, ktmyshop, PULMUONE
+            )
+            VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 1, %s, %s, %s);
+        """
+
+        cursor.execute(insert_query, (
+            store_business_number,
+            city_id,
+            district_id,
+            sub_district_id,
+            reference_id,
+            large_category_code,
+            medium_category_code,
+            small_category_code,
+            large_category_name,
+            medium_category_name,
+            small_category_name,
+            store_name,
+            road_name,
+            longitude,
+            latitude,
+            tag_flags["jsam"], tag_flags["ktmyshop"], tag_flags["PULMUONE"]
+        ))
+
+        connection.commit()
+        return True
+
+    except Exception as e:
+        print("❌ 매장 저장 중 오류 발생:", e)
+        connection.rollback()
+        return False
+
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+

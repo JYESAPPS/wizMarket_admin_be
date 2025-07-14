@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 class FilterRequest(BaseModel):
@@ -177,3 +177,21 @@ class LocStoreInfoForContentOutPut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+
+
+class AddRequest(BaseModel):
+    city_id: int
+    district_id: int
+    sub_district_id: int 
+
+    reference_id:int 
+    large_category_code: str 
+    medium_category_code: str 
+    small_category_code: str
+
+    store_name: str 
+    road_name : str
+    selected: Optional[List[str]]
