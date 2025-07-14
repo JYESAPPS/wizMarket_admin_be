@@ -679,7 +679,8 @@ def get_store_data(store_business_number):
             SELECT 
                 SUB_DISTRICT_ID,
                 STORE_NAME, ROAD_NAME_ADDRESS,
-                SMALL_CATEGORY_CODE, LONGITUDE, LATITUDE
+                SMALL_CATEGORY_NAME, SMALL_CATEGORY_CODE, 
+                LONGITUDE, LATITUDE
             FROM LOCAL_STORE
             WHERE STORE_BUSINESS_NUMBER = %s;
         """
@@ -692,12 +693,13 @@ def get_store_data(store_business_number):
                 row["SUB_DISTRICT_ID"],
                 row["STORE_NAME"],
                 row["ROAD_NAME_ADDRESS"],
+                row["SMALL_CATEGORY_NAME"],
                 row["SMALL_CATEGORY_CODE"],
                 row["LONGITUDE"],
                 row["LATITUDE"]
             )
         else:
-            return (None, None, None, None, None)
+            return (None, None, None, None, None, None)
     finally:
         if cursor:
             cursor.close()
@@ -748,7 +750,10 @@ def get_loc_info_data(sub_district_id):
             SELECT 
                 SHOP, MOVE_POP, SALES, WORK_POP, INCOME, SPEND, HOUSE, RESIDENT
             FROM loc_info
-            WHERE SUB_DISTRICT_ID = %s;
+            WHERE SUB_DISTRICT_ID = %s
+            ORDER BY Y_M DESC
+            LIMIT 1;
+
         """
 
         cursor.execute(select_query, (sub_district_id))
@@ -853,6 +858,37 @@ def get_biz_category_name(rep_id):
             )
         else:
             return (None)
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+def get_top5(sub_district_id, rep_id):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                TOP_MENU_1, TOP_MENU_2, TOP_MENU_3, TOP_MENU_4, TOP_MENU_5
+            FROM commercial_district 
+            WHERE SUB_DISTRICT_ID = %s AND BIZ_DETAIL_CATEGORY_ID = %s
+        """
+
+        cursor.execute(select_query, (sub_district_id, rep_id))
+        row = cursor.fetchone()
+
+        if row:
+            return (
+                row["TOP_MENU_1"],
+                row["TOP_MENU_2"],
+                row["TOP_MENU_3"],
+                row["TOP_MENU_4"],
+                row["TOP_MENU_5"],
+            )
+        else:
+            return (None, None, None, None, None)
     finally:
         if cursor:
             cursor.close()

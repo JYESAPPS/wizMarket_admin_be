@@ -12,7 +12,8 @@ from app.crud.loc_store import (
     get_loc_info_data as crud_get_loc_info_data,
     get_category_data as crud_get_category_data,
     get_biz_id as crud_get_biz_id,
-    get_biz_category_name as crud_get_biz_category_name
+    get_biz_category_name as crud_get_biz_category_name,
+    get_top5 as crud_get_top5
 )
 from app.crud.loc_store import *
 
@@ -112,7 +113,7 @@ def add_new_store(data, longitude, latitude):
 def copy_new_store(store_business_number):
 
     # 매장 데이터 꺼내오기
-    sub_district_id, store_name, road_name, small_category_code, longitude, latitude = crud_get_store_data(store_business_number)
+    sub_district_id, store_name, road_name, small_category_name, small_category_code, longitude, latitude = crud_get_store_data(store_business_number)
 
     # 지역 명 가져오기
     city_name, district_name, sub_district_name = crud_get_city_data(sub_district_id)
@@ -120,18 +121,23 @@ def copy_new_store(store_business_number):
     # 입지 정보 값 가져오기
     shop, move_pop, sales, work_pop, income, spend, house, resident = crud_get_loc_info_data(sub_district_id)
 
+    # 입지 j-score 값 가져오기
+
     # 상권 정보 값 가져오기
     ## 카테고리 엮기
     
-    ### 대표 ID 가져오기
-    detail_category_id = crud_get_category_data(small_category_code)
+    ### 상권 정보 분류표 ID 가져오기
+    business_area_category_id = crud_get_category_data(small_category_code)
 
-    ### 매핑으로 엮기
-    rep_id = crud_get_biz_id(detail_category_id)
+    ### 매핑 값 가져오기
+    rep_id = crud_get_biz_id(business_area_category_id)
 
     ### 매핑한 NAME 값 가져오기
-    main, sub, detail = crud_get_biz_category_name(rep_id)
-    print(main)
+    biz_main_category_id, biz_sub_category_id, biz_detail_category_id = crud_get_biz_category_name(rep_id)
+
+    # 소분류 주문 TOP 메뉴 가져오기
+    top_1, top_2, top_3, top_4, top_5 = crud_get_top5(sub_district_id, rep_id)
+    print(top_1)
     # 리포트에 넣기
     print(small_category_code)
 
