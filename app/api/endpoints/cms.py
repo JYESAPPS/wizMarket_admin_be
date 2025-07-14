@@ -14,10 +14,10 @@ router = APIRouter()
 @router.post("/thumbnail/insert")
 async def insert_thumbnail(data: ThumbnailInsertRequest):
     # 예: categoryName, styles 접근
-    print("카테고리명:", data.categoryId)
-    for style in data.styles:
-        print(f"스타일 {style.designId} - 프롬프트 수: {len(style.prompts)}")
+    # print("카테고리명:", data.categoryId)
+    # for style in data.styles:
+    #     print(f"스타일 {style.designId} - 프롬프트 수: {len(style.prompts)}")
     
-    service_insert_thumbnail(data)
+    # service_insert_thumbnail(data)
 
     return {"message": "ok"}
