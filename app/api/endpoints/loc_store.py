@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from app.service.loc_store import (
     filter_loc_store,
     select_loc_store_for_content_by_store_business_number as service_select_loc_store_for_content_by_store_business_number,
+    
+)
+from app.service.loc_store_to_report import (
     match_exist_store as service_match_exist_store,
     add_new_store as service_add_new_store,
     copy_new_store as service_copy_new_store
