@@ -83,7 +83,7 @@ def add_new_store(data, longitude, latitude):
     small_category_code = data.small_category_code
     store_name = data.store_name
     road_name = data.road_name
-    selected = data.selected
+    selected = data.selected or []
 
     # 초기값은 모두 0
     tag_flags = {

@@ -7,7 +7,8 @@ from app.service.loc_store import (
 from app.service.loc_store_to_report import (
     match_exist_store as service_match_exist_store,
     add_new_store as service_add_new_store,
-    copy_new_store as service_copy_new_store
+    copy_new_store as service_copy_new_store,
+    select_one_store as service_select_one_store
 )
 from app.schemas.loc_store import *
 import logging
@@ -110,21 +111,24 @@ def copy_new_store(request: ReportRequest):
     # 서비스 레이어 전달
     sucess = service_copy_new_store(store_business_number)
 
-
+    return {
+        "store_business_number": store_business_number,
+    }
 
 
 
 # 매장 조회
 @router.post("/search")
-def add_new_store(request: AddRequest):
-    # 1. 기존 매장 존재 여부 확인
-    store_info = service_match_exist_store(request)
+def add_new_store(request: OneStoreRequest):
+    store_info = service_select_one_store(request)
+
+    if not store_info:
+        return None  # 또는 return {} 또는 raise HTTPException
 
     return {
-        "store_business_number": store_info.get("STORE_BUSINESS_NUMBER", None),
-        "store_name": store_info["STORE_NAME"],
-        "road_name_address": store_info["ROAD_NAME_ADDRESS"],
+        "store_business_number": store_info.get("STORE_BUSINESS_NUMBER", None)
     }
+
 
     
 

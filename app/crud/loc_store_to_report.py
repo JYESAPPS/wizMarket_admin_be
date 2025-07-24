@@ -35,7 +35,7 @@ def select_one_store(
         if row:
             return row
         else:
-            return row
+            return None
 
     finally:
         if cursor:

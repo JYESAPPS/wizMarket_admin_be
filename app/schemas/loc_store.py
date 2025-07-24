@@ -194,9 +194,23 @@ class AddRequest(BaseModel):
 
     store_name: str 
     road_name : str
-    selected: Optional[List[str]]
+    selected: Optional[List[str]] = None
 
 
 class ReportRequest(BaseModel):
     store_business_number: str
 
+
+
+class OneStoreRequest(BaseModel):
+    city_id: int
+    district_id: int
+    sub_district_id: int 
+
+    reference_id:int 
+    large_category_code: str 
+    medium_category_code: str 
+    small_category_code: str
+
+    store_name: str 
+    road_name : str
