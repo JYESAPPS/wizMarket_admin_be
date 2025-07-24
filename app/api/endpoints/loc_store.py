@@ -114,6 +114,18 @@ def copy_new_store(request: ReportRequest):
 
 
 
+# 매장 조회
+@router.post("/search")
+def add_new_store(request: AddRequest):
+    # 1. 기존 매장 존재 여부 확인
+    store_info = service_match_exist_store(request)
 
+    return {
+        "store_business_number": store_info.get("STORE_BUSINESS_NUMBER", None),
+        "store_name": store_info["STORE_NAME"],
+        "road_name_address": store_info["ROAD_NAME_ADDRESS"],
+    }
+
+    
 
 

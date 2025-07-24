@@ -3,6 +3,47 @@ from typing import List
 import pymysql
 from app.db.connect import close_connection, close_cursor, get_db_connection, get_re_db_connection
 
+
+
+# 기존 매장 1개조회
+def select_one_store(
+    city_id, district_id, sub_district_id,
+    large_category_code, medium_category_code, small_category_code,
+    store_name
+):
+    connection = get_db_connection()
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    try:
+        select_query = """
+            SELECT 
+                STORE_BUSINESS_NUMBER, STORE_NAME, ROAD_NAME_ADDRESS
+            FROM LOCAL_STORE
+            WHERE 
+                CITY_ID = %s and
+                DISTRICT_ID = %s and
+                SUB_DISTRICT_ID = %s and
+                LARGE_CATEGORY_CODE = %s and
+                MEDIUM_CATEGORY_CODE = %s and
+                SMALL_CATEGORY_CODE = %s and
+                STORE_NAME = %s
+        """
+
+        cursor.execute(select_query, (city_id, district_id, sub_district_id, large_category_code, medium_category_code, small_category_code, store_name))
+        row = cursor.fetchone()
+
+        if row:
+            return row
+        else:
+            return row
+
+    finally:
+        if cursor:
+            cursor.close()
+        connection.close()
+
+
+
 # 기존 매장 일치 여부
 def match_exist_store(
     city_id, district_id, sub_district_id,

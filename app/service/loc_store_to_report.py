@@ -28,11 +28,29 @@ from app.crud.loc_store_to_report import (
     get_sub_district_name_nation as crud_get_sub_district_name_nation,
     get_hot_place as crud_get_hot_place,
     get_hot_place_loc_info as crud_get_hot_place_loc_info,
-    insert_into_report as crud_insert_into_report
+    insert_into_report as crud_insert_into_report,
+    select_one_store as crud_select_one_store
 )
 from decimal import Decimal
 
 
+
+def select_one_store(data):
+    city_id = data.city_id
+    district_id = data.district_id
+    sub_district_id = data.sub_district_id
+    large_category_code = data.large_category_code
+    medium_category_code = data.medium_category_code
+    small_category_code = data.small_category_code
+    store_name = data.store_name
+
+    store_info = crud_select_one_store(
+        city_id, district_id, sub_district_id,
+        large_category_code, medium_category_code, small_category_code,
+        store_name
+    )
+
+    return store_info
 
 # 기존 매장 일치 여부
 def match_exist_store(data) :
