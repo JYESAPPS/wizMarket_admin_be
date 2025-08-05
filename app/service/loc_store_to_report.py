@@ -101,7 +101,7 @@ def add_new_store(data, longitude, latitude):
 
     # MAX 매장 관리 번호 값 뽑기
     prev_number = crud_get_max_number()  # 예: "JS0012"
-
+    print(prev_number)
     # JS 접두사 제거 + 숫자 변환
     if prev_number:
         number = int(prev_number[0]) + 1
@@ -132,8 +132,17 @@ def copy_new_store(store_business_number):
     # 입지 정보 값 가져오기
     shop, move_pop, sales, work_pop, income, spend, house, resident, loc_info_ref_date = crud_get_loc_info_data(sub_district_id)
 
-    loc_info_resident_per = resident/(resident + work_pop)
-    loc_info_work_pop_per = work_pop/(resident + work_pop)
+    resident = resident or 0
+    work_pop = work_pop or 0
+
+    # 0으로 나누기 방지
+    total_pop = resident + work_pop
+    if total_pop == 0:
+        loc_info_resident_per = 0
+        loc_info_work_pop_per = 0
+    else:
+        loc_info_resident_per = resident / total_pop
+        loc_info_work_pop_per = work_pop / total_pop
 
     # 입지 j-score 값 가져오기
     loc_info_j_score_average = crud_get_loc_info_j_score(sub_district_id, loc_info_ref_date, 'j_score_average')
@@ -174,6 +183,15 @@ def copy_new_store(store_business_number):
     population_40 = m_40 + f_40
     population_50 = m_50 + f_50
     population_60 = m_60 + f_60
+
+    resident = resident or 0
+    work_pop = work_pop or 0
+    move_pop = move_pop or 0
+    shop = shop or 0
+    income = income or 0
+    sales = sales or 0
+    spend = spend or 0
+    house = house or 0
 
     # 입지 정보 값 가공
     loc_info_resident_k = resident / 1000

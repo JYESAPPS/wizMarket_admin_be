@@ -15,6 +15,7 @@ def select_one_store(
     cursor = connection.cursor(pymysql.cursors.DictCursor)
 
     try:
+        # 1. 가게명 조건 없이 미리 필터된 가게 리스트 조회
         select_query = """
             SELECT 
                 STORE_BUSINESS_NUMBER, STORE_NAME, ROAD_NAME_ADDRESS
@@ -25,22 +26,28 @@ def select_one_store(
                 SUB_DISTRICT_ID = %s and
                 LARGE_CATEGORY_CODE = %s and
                 MEDIUM_CATEGORY_CODE = %s and
-                SMALL_CATEGORY_CODE = %s and
-                STORE_NAME = %s
+                SMALL_CATEGORY_CODE = %s
         """
 
-        cursor.execute(select_query, (city_id, district_id, sub_district_id, large_category_code, medium_category_code, small_category_code, store_name))
-        row = cursor.fetchone()
+        cursor.execute(select_query, (
+            city_id, district_id, sub_district_id,
+            large_category_code, medium_category_code, small_category_code
+        ))
+        rows = cursor.fetchall()
 
-        if row:
-            return row
-        else:
-            return None
+        # 2. Python 내에서 store_name 기준 LIKE 필터
+        matched_rows = [
+            row for row in rows
+            if store_name in row["STORE_NAME"]
+        ]
+
+        return matched_rows  # 조건에 맞는 모든 항목 리스트 반환 (없으면 빈 리스트)
 
     finally:
         if cursor:
             cursor.close()
         connection.close()
+
 
 
 

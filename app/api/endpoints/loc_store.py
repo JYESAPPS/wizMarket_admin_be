@@ -109,11 +109,9 @@ def copy_new_store(request: ReportRequest):
     store_business_number = request.store_business_number
 
     # 서비스 레이어 전달
-    sucess = service_copy_new_store(store_business_number)
+    service_copy_new_store(store_business_number)
 
-    return {
-        "store_business_number": store_business_number,
-    }
+    return [store_business_number]
 
 
 
@@ -125,9 +123,7 @@ def add_new_store(request: OneStoreRequest):
     if not store_info:
         return None  # 또는 return {} 또는 raise HTTPException
 
-    return {
-        "store_business_number": store_info.get("STORE_BUSINESS_NUMBER", None)
-    }
+    return store_info
 
 
     
