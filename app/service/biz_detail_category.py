@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import HTTPException
 from app.schemas.biz_sub_category import BizSubCategoryOutput
-from crud.biz_detail_category import (
+from app.crud.biz_detail_category import (
     get_all_biz_detail_category_by_biz_sub_category_id as crud_get_all_biz_detail_category_by_biz_sub_category_id,
 )
 

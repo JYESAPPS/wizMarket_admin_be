@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List
 from app.schemas.biz_main_category import BizMainCategoryOutput
-from service.biz_main_category import (
+from app.service.biz_main_category import (
     get_all_biz_main_category as service_get_all_biz_main_category,
 )
 
