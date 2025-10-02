@@ -23,7 +23,8 @@ from app.api.endpoints import (
     commercial_district,
     local_store_content,
     ads,
-    cms
+    cms,
+    test
 )
 from app.api.endpoints import loc_info
 from app.api.endpoints import population
@@ -46,7 +47,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print(os.getenv("ALLOWED_ORIGINS", ""))
+# print(os.getenv("ALLOWED_ORIGINS", ""))
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -77,6 +78,7 @@ app.include_router(local_store_content.router, prefix="/store/content")
 app.include_router(category_content.router, prefix="/category/content")
 app.include_router(ads.router, prefix="/ads")
 app.include_router(cms.router, prefix="/cms")
+app.include_router(test.router)
 
 if __name__ == "__main__":
     import uvicorn

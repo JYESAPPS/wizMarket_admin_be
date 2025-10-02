@@ -17,3 +17,5 @@ openai==1.51.2
 python-multipart==0.0.17
 translate==3.6.1
 pillow==11.0.0
+pydantic==2.11.0
+pycryptodomex==3.21.0
