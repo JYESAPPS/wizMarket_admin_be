@@ -101,7 +101,7 @@ def add_new_store(data, longitude, latitude):
 
     # MAX 매장 관리 번호 값 뽑기
     prev_number = crud_get_max_number()  # 예: "JS0012"
-    print(prev_number)
+    # print(prev_number)
     # JS 접두사 제거 + 숫자 변환
     if prev_number:
         number = int(prev_number[0]) + 1
