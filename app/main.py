@@ -49,7 +49,7 @@ app.add_middleware(
 
 # print(os.getenv("ALLOWED_ORIGINS", ""))
 
-app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 @app.get("/")
